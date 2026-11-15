@@ -70,8 +70,15 @@ private slots:
   void automaticUnlockSelection() {
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
+#ifdef Q_OS_WIN
+    const auto commander = dir.filePath("JLink.exe");
+    const auto legacy = dir.filePath("JLinkSTM32.exe");
+    const auto devproPath = dir.filePath("DevPro.exe");
+#else
     const auto commander = dir.filePath("JLinkExe");
     const auto legacy = dir.filePath("JLinkSTM32Exe");
+    const auto devproPath = dir.filePath("DevPro");
+#endif
     QFile utility(legacy);
     QVERIFY(utility.open(QIODevice::WriteOnly));
     utility.close();
@@ -80,7 +87,7 @@ private slots:
     QVERIFY(JLink::unlockMethod(commander, "GD32F407VG").isEmpty());
     QVERIFY(JLink::unlockMethod(commander, "STM32F7XX").isEmpty());
     QVERIFY(QDir(dir.path()).mkdir("Script"));
-    QFile devpro(dir.filePath("DevPro"));
+    QFile devpro(devproPath);
     QVERIFY(devpro.open(QIODevice::WriteOnly));
     devpro.close();
     QVERIFY(devpro.setPermissions(QFileDevice::ReadOwner | QFileDevice::ExeOwner));
@@ -94,10 +101,18 @@ private slots:
     QTemporaryDir dir;
     QVERIFY(dir.isValid());
     const auto fake = QString::fromUtf8(FAKE_JLINK_PATH);
+#ifdef Q_OS_WIN
+    const auto commander = dir.filePath("JLink.exe");
+    const auto legacy = dir.filePath("JLinkSTM32.exe");
+    const auto devpro = dir.filePath("DevPro.exe");
+#else
     const auto commander = dir.filePath("JLinkExe");
+    const auto legacy = dir.filePath("JLinkSTM32Exe");
+    const auto devpro = dir.filePath("DevPro");
+#endif
     QVERIFY(QFile::copy(fake, commander));
-    QVERIFY(QFile::copy(fake, dir.filePath("JLinkSTM32Exe")));
-    QVERIFY(QFile::copy(fake, dir.filePath("DevPro")));
+    QVERIFY(QFile::copy(fake, legacy));
+    QVERIFY(QFile::copy(fake, devpro));
     QVERIFY(QDir(dir.path()).mkdir("Script"));
     QFile script(dir.filePath("Script/PCode_DevPro_GigaDevice_GD32A4_GD32F4.pex"));
     QVERIFY(script.open(QIODevice::WriteOnly));
