@@ -42,6 +42,17 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="${{ matrix.cmake_arch }}"
       - run: cmake --build build --config Release --parallel 3
       - run: ctest --test-dir build -C Release --output-on-failure
+      - name: Diagnose Windows core tests
+        if: failure() && runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $tests = & build/Release/tailor_tests.exe -functions
+          foreach ($test in $tests) {
+            $name = $test -replace '\(\)$', ''
+            Write-Host "Running $name"
+            & build/Release/tailor_tests.exe $name
+            if ($LASTEXITCODE -ne 0) { Write-Host "Failed: $name" }
+          }
       - run: cmake --install build --config Release --prefix "${{ github.workspace }}/dist"
       - name: Package (Windows)
         if: runner.os == 'Windows'
