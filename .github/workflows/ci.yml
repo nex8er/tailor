@@ -42,7 +42,7 @@ jobs:
         run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_OSX_ARCHITECTURES="${{ matrix.cmake_arch }}"
       - run: cmake --build build --config Release --parallel 3
       - run: ctest --test-dir build -C Release --output-on-failure
-      - run: cmake --install build --config Release --prefix dist
+      - run: cmake --install build --config Release --prefix "${{ github.workspace }}/dist"
       - name: Package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -67,7 +67,7 @@ jobs:
       - run: cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
       - run: cmake --build build --parallel 3
       - run: ctest --test-dir build --output-on-failure
-      - run: cmake --install build --prefix dist
+      - run: cmake --install build --prefix "$GITHUB_WORKSPACE/dist"
       - run: tar -C dist -czf tailor-linux-arm64.tar.gz .
       - uses: actions/upload-artifact@v4
         with:
