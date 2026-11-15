@@ -1,0 +1,6 @@
+if(NOT DEFINED TAILOR_CONFIG)
+    set(TAILOR_CONFIG Release)
+endif()
+set(TAILOR_TEST ON)
+set(TAILOR_INSTALL ON)
+include("${CMAKE_CURRENT_LIST_DIR}/build.cmake")

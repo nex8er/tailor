@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Tailor
+Comment=J-Link flash programmer
+Exec=tailor %f
+Icon=tailor
+Terminal=false
+Categories=Development;Electronics;
+MimeType=application/x-tailor-hex;application/x-tailor-bin;

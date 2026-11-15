@@ -1,0 +1,50 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {"major": 3, "minor": 24, "patch": 0},
+  "configurePresets": [
+    {
+      "name": "base",
+      "hidden": true,
+      "binaryDir": "${sourceDir}/build/presets/${presetName}",
+      "installDir": "${sourceDir}/dist/${presetName}",
+      "cacheVariables": {"BUILD_TESTING": true}
+    },
+    {"name": "debug", "displayName": "Debug (native)", "inherits": "base", "cacheVariables": {"CMAKE_BUILD_TYPE": "Debug"}},
+    {"name": "release", "displayName": "Release (native)", "inherits": "base", "cacheVariables": {"CMAKE_BUILD_TYPE": "Release"}},
+    {
+      "name": "macos-arm64", "hidden": true,
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"},
+      "cacheVariables": {"CMAKE_OSX_ARCHITECTURES": "arm64", "CMAKE_OSX_SYSROOT": "macosx"}
+    },
+    {
+      "name": "macos-x86_64", "hidden": true,
+      "condition": {"type": "equals", "lhs": "${hostSystemName}", "rhs": "Darwin"},
+      "cacheVariables": {"CMAKE_OSX_ARCHITECTURES": "x86_64", "CMAKE_OSX_SYSROOT": "macosx"}
+    },
+    {"name": "debug-macos-arm64", "inherits": ["macos-arm64", "debug"]},
+    {"name": "release-macos-arm64", "inherits": ["macos-arm64", "release"]},
+    {"name": "debug-macos-x86_64", "inherits": ["macos-x86_64", "debug"]},
+    {"name": "release-macos-x86_64", "inherits": ["macos-x86_64", "release"]}
+  ],
+  "buildPresets": [
+    {"name": "debug", "configurePreset": "debug", "configuration": "Debug"},
+    {"name": "release", "configurePreset": "release", "configuration": "Release"},
+    {"name": "debug-macos-arm64", "configurePreset": "debug-macos-arm64", "configuration": "Debug"},
+    {"name": "release-macos-arm64", "configurePreset": "release-macos-arm64", "configuration": "Release"},
+    {"name": "debug-macos-x86_64", "configurePreset": "debug-macos-x86_64", "configuration": "Debug"},
+    {"name": "release-macos-x86_64", "configurePreset": "release-macos-x86_64", "configuration": "Release"}
+  ],
+  "testPresets": [
+    {
+      "name": "macos-ctest-path",
+      "hidden": true,
+      "environment": {"PATH": "$penv{PATH}:/opt/homebrew/bin:/usr/local/bin"}
+    },
+    {"name": "debug", "configurePreset": "debug", "configuration": "Debug", "output": {"outputOnFailure": true}},
+    {"name": "release", "configurePreset": "release", "configuration": "Release", "output": {"outputOnFailure": true}},
+    {"name": "debug-macos-arm64", "inherits": "macos-ctest-path", "configurePreset": "debug-macos-arm64", "configuration": "Debug", "output": {"outputOnFailure": true}},
+    {"name": "release-macos-arm64", "inherits": "macos-ctest-path", "configurePreset": "release-macos-arm64", "configuration": "Release", "output": {"outputOnFailure": true}},
+    {"name": "debug-macos-x86_64", "inherits": "macos-ctest-path", "configurePreset": "debug-macos-x86_64", "configuration": "Debug", "output": {"outputOnFailure": true}},
+    {"name": "release-macos-x86_64", "inherits": "macos-ctest-path", "configurePreset": "release-macos-x86_64", "configuration": "Release", "output": {"outputOnFailure": true}}
+  ]
+}
